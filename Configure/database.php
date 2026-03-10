@@ -61,7 +61,7 @@ $catCount = $stmt->fetchColumn();
 
 if ($catCount ==0 )
     {
-        $pdo->exc("INSERT INTO categories (name, color) VALUES 
+        $pdo->exec("INSERT INTO categories (name, color) VALUES 
         ( 'Personal','#e91e63'),
         ('Work','#2196f3'),
         (Ideas','#ff9800'),
@@ -70,4 +70,24 @@ if ($catCount ==0 )
         ");
     }
 
-    //cre
+    //create notes table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS notes (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
+        
+        title VARCHAR(255) NOT NULL,
+        content TEXT ,
+        COLOR VARCHAR(7) DEFAULT '#ffffff',
+        is_pinned INTEGER DEFAULT 0,
+        is_archuved INTEGER DEFAULT 0,
+        category_id INTEGER NULL REFERENCES categories(id) ON DELETE SET NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+           )");
+
+           //create indexex (postgreSQL automatically creates an index for primary keys and unique constraints, but we can create additional indexes for better performance)
+              $pdo->exec("CREATE INDEX IF NOT EXISTS idx_notes_is_archived ON notes(is_archived)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_notes_is_pinned ON notes(is_pinned)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_notes_is_updated_at ON notes(updated_at)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id)");
+                
