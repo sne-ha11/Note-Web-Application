@@ -17,3 +17,4 @@ function loadEnv($path)
             $_SERVER[$name] = $value;
         }
     }
+ }
